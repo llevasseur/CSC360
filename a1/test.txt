@@ -1,0 +1,25 @@
+Intial list: 2 3 4 5 8 11 14 14 
+list size: 8
+Delete element with value 8: 2 3 4 5 11 14 14 
+Insert 12 after 11 by reverse search: 2 3 4 5 11 12 14 14 
+Swap 3 and 12: 2 3 4 5 11 12 14 14 
+Swap 4 and 5: 2 3 4 5 11 12 14 14 
+Swap again 4 and 5: 2 3 4 5 11 12 14 14 
+Reverse the list: 2 3 4 5 11 12 14 14 
+Push 55 and then reverse the list again: 2 3 4 5 11 12 14 14 55 
+Create another list: 7 15 30 60 120 
+Concatenate two lists: 2 3 4 5 11 12 14 14 55 7 15 30 60 120 
+Revese the new list: 2 3 4 5 11 12 14 14 55 7 15 30 60 120 
+Insert one 3 and two 7 after 15: 2 3 4 5 11 12 14 14 55 7 15 3 7 7 30 60 120 
+Apply unique function to the list: 2 3 4 5 11 12 14 14 55 7 15 3 7 7 30 60 120 
+Shift left 3 times: 2 3 4 5 11 12 14 14 55 7 15 3 7 7 30 60 120 
+Rotate left 2 times: 2 3 4 5 11 12 14 14 55 7 15 3 7 7 30 60 120 
+Distance between 14 and 15: 0
+Distance between 15 and 14: 0
+Distance between 5 and 4: 0
+Distance between 5 and 5: 0
+Distance between begin and end: 0
+list size: 17
+Create new list from array: 11 5 4 12 2 
+New list is included in the other one: No
+Free up the memory!
