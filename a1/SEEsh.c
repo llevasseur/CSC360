@@ -219,7 +219,7 @@ char **sh_split_line(char *line) {
             }
         }
 
-        token = strlok(NULL, SH_TOK_DELIM);
+        token = strtok(NULL, SH_TOK_DELIM);
     }
     tokens[position] = NULL;
     return tokens;
