@@ -16,7 +16,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
+#define SH_RL_BUFSIZE 512
+extern char **environ;
 
 /*
     Function Declarations for built-in Shell commands:
@@ -24,20 +27,29 @@
 int sh_cd(char **args);
 int sh_help(char **args);
 int sh_exit(char **args);
+int sh_pwd();
+int sh_set_var();
+int sh_unset_var();
 
 /*
     List of built-in commands, followed by their corresponding functions.
  */
 char *builtin_str[] = {
-    "ch",
+    "cd",
     "help",
-    "exit"
+    "exit",
+    "pwd",
+    "set",
+    "unset"
 };
 
 int (*builtin_func[]) (char **) = {
     &sh_cd,
     &sh_help,
-    &sh_exit
+    &sh_exit,
+    &sh_pwd,
+    &sh_set_var,
+    &sh_unset_var
 };
 
 int sh_num_builtins() {
@@ -55,7 +67,9 @@ int sh_num_builtins() {
   */
 int sh_cd (char **args) {
     if (args[1] == NULL) {
-        fprintf(stderr, "sh: expected argument to \"cd\"\n");
+        char * homedir = getenv("HOME");
+        chdir(homedir);
+        //fprintf(stderr, "sh: expected argument to \"cd\"\n");
     } else {
         if (chdir(args[1]) != 0) {
             perror("sh");
@@ -93,12 +107,84 @@ int sh_exit(char **args) {
 }
 
 /**
+    @breif Built-in command: pwd.
+    @param args list of args. Not examined.
+    @return Always return 1, to continue executing.
+  */
+int sh_pwd() {
+    char cwd[SH_RL_BUFSIZE];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("Current working dir: %s\n", cwd);
+    } else {
+        perror("getcwd() error");
+    }
+    return 1;
+}
+
+
+/**
+    @breif Built-in command: set var [value].
+    @param args list of args. Not examined.
+    @return Always return 1, to continue executing.
+  */
+
+int sh_set_var(char **args) {
+    if (sizeof(args) > 3) {
+        perror("set warning: too many arguments given.");
+    }
+    if (!args[1]) {
+        //show all enviornment Variables
+        for (char **env = environ; *env != 0; env++) {
+          char *thisEnv = *env;
+            printf("%s\n", thisEnv);
+        }
+        return 1;
+    }
+    if (!args[2]) {
+        //create new enviornment variable
+        setenv(args[1], "", 1);
+        return 1;
+    }
+    //overwrite env var
+    setenv(args[1], args[2], 1);
+    return 1;
+
+}
+
+/**
+    @breif Built-in command: unset var.
+    @param args list of args. Not examined.
+    @return Always return 1, to continue executing.
+  */
+
+int sh_unset_var(char **args) {
+    if (!args[1]) {
+        perror("unset error: no env variable given.");
+        return 1;
+    }
+    if (sizeof(args) > 2) {
+        perror("unset warning: too many arguments given.");
+    }
+    unsetenv(args[1]);
+    return 1;
+}
+
+/**
+    @breif kill current child.
+    @return exits program.
+  */
+void kill_child() {
+    exit(0);
+}
+
+
+/**
     @breif Launch a program and wait for it to terminate.
     @param args Null terminated list of arguments (including program).
     @return Always return 1, to continue executing.
   */
 int sh_launch (char **args) {
-    pid_t = pid;
+    pid_t pid;
     int status;
 
     pid = fork();
@@ -141,7 +227,6 @@ int sh_execute(char **args) {
     return sh_launch(args);
 }
 
-#define SH_RL_BUFSIZE 512
 /**
     @breif Read a line of input from stdin
     @return The line from stdin
@@ -252,6 +337,7 @@ void sh_loop(void) {
   */
 int main(int argc, char **argv) {
     //Load config files, if any.
+    signal(SIGINT, kill_child);
 
     //Run command loop.
     sh_loop();

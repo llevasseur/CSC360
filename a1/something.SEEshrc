@@ -1,0 +1,12 @@
+help
+pwd
+cd ..
+pwd
+set
+set TMP
+set
+set TMP some_information
+set
+unset TMP
+set
+exit
