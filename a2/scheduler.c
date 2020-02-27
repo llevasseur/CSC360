@@ -96,6 +96,10 @@ void scheduler() {
             }
         }
         index++;
+        if(index > num_tasks)
+        {
+          index = 0;
+        }
     }
 }
 
