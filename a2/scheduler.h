@@ -11,7 +11,7 @@ typedef void (*task_fn_t)();
 typedef int task_t;
 
 /**
- * Initialize the scheduler. Programs should call this before calling any other
+ * Initia lize the scheduler. Programs should call this before calling any other
  * functiosn in this file.
  */
 void scheduler_init();

@@ -15,7 +15,7 @@ void sleep_ms(size_t ms) {
   size_t rem = ms % 1000;
   ts.tv_sec = (ms - rem)/1000;
   ts.tv_nsec = rem * 1000000;
-  
+
   // Sleep repeatedly as long as nanosleep is interrupted
   while(nanosleep(&ts, &ts) != 0) {}
 }
@@ -29,7 +29,7 @@ size_t time_ms() {
     perror("gettimeofday");
     exit(2);
   }
-  
+
   // Convert timeval values to milliseconds
   return tv.tv_sec*1000 + tv.tv_usec/1000;
 }

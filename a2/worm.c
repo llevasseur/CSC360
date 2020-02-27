@@ -75,25 +75,25 @@ void init_display() {
   printw(" Worm! ");
   addch(ACS_DIAMOND);
   addch(ACS_DIAMOND);
-  
+
   // Print corners
   mvaddch(screen_row(-1), screen_col(-1), ACS_ULCORNER);
   mvaddch(screen_row(-1), screen_col(BOARD_WIDTH), ACS_URCORNER);
   mvaddch(screen_row(BOARD_HEIGHT), screen_col(-1), ACS_LLCORNER);
   mvaddch(screen_row(BOARD_HEIGHT), screen_col(BOARD_WIDTH), ACS_LRCORNER);
-  
+
   // Print top and bottom edges
   for(int col=0; col<BOARD_WIDTH; col++) {
     mvaddch(screen_row(-1), screen_col(col), ACS_HLINE);
     mvaddch(screen_row(BOARD_HEIGHT), screen_col(col), ACS_HLINE);
   }
-  
+
   // Print left and right edges
   for(int row=0; row<BOARD_HEIGHT; row++) {
     mvaddch(screen_row(row), screen_col(-1), ACS_VLINE);
     mvaddch(screen_row(row), screen_col(BOARD_WIDTH), ACS_VLINE);
   }
-  
+
   // Refresh the display
   refresh();
 }
@@ -129,13 +129,13 @@ void draw_board() {
         }
       }
     }
-  
+
     // Draw the score
     mvprintw(screen_row(-2), screen_col(BOARD_WIDTH-9), "Score %03d\r", worm_length-INIT_WORM_LENGTH);
-  
+
     // Refresh the display
     refresh();
-    
+
     // Sleep for a while before drawing the board again
     task_sleep(DRAW_BOARD_INTERVAL);
   }
@@ -148,13 +148,13 @@ void read_input() {
   while(running) {
     // Read a character, potentially blocking this thread until a key is pressed
     int key = task_readchar();
-    
+
     // Make sure the input was read correctly
     if(key == ERR) {
       running = false;
       fprintf(stderr, "ERROR READING INPUT\n");
     }
-    
+
     // Handle the key press
     if(key == KEY_UP && worm_dir != DIR_SOUTH) {
       worm_dir = DIR_NORTH;
@@ -177,7 +177,7 @@ void update_worm() {
   while(running) {
     int worm_row;
     int worm_col;
-  
+
     // "Age" each existing segment of the worm
     for(int r=0; r<BOARD_HEIGHT; r++) {
       for(int c=0; c<BOARD_WIDTH; c++) {
@@ -185,11 +185,11 @@ void update_worm() {
           worm_row = r;
           worm_col = c;
         }
-      
+
         // Add 1 to the age of the worm segment
         if(board[r][c] > 0) {
           board[r][c]++;
-        
+
           // Remove the worm segment if it is too old
           if(board[r][c] > worm_length) {
             board[r][c] = 0;
@@ -197,7 +197,7 @@ void update_worm() {
         }
       }
     }
-  
+
     // Move the worm into a new space
     if(worm_dir == DIR_NORTH) {
       worm_row--;
@@ -208,18 +208,18 @@ void update_worm() {
     } else if(worm_dir == DIR_WEST) {
       worm_col--;
     }
-  
+
     // Check for edge collisions
     if(worm_row < 0 || worm_row >= BOARD_HEIGHT || worm_col < 0 || worm_col >= BOARD_WIDTH) {
       running = false;
-      
+
       // Add a key to the input buffer so the read_input thread can exit
       ungetch(0);
-      
+
     } else if(board[worm_row][worm_col] > 0) {
       // Check for worm collisions
       running = false;
-      
+
       // Add a key to the input buffer so the read_input thread can exit
       ungetch(0);
     } else if(board[worm_row][worm_col] < 0) {
@@ -227,10 +227,10 @@ void update_worm() {
       // Worm gets longer
       worm_length++;
     }
-  
+
     // Add the worm's new position
     if(running) board[worm_row][worm_col] = 1;
-  
+
     // Update the worm movement speed to deal with rectangular cursors
     if(worm_dir == DIR_NORTH || worm_dir == DIR_SOUTH) {
       task_sleep(WORM_VERTICAL_INTERVAL);
@@ -253,7 +253,7 @@ void update_apples() {
         }
       }
     }
-    
+
     task_sleep(APPLE_UPDATE_INTERVAL);
   }
 }
@@ -268,7 +268,7 @@ void generate_apple() {
     while(!inserted) {
       int r = rand() % BOARD_HEIGHT;
       int c = rand() % BOARD_WIDTH;
-    
+
       // If the cell is empty, add an apple
       if(board[r][c] == 0) {
         // Pick a random age between apple_age/2 and apple_age*1.5
@@ -289,53 +289,53 @@ int main(void) {
     fprintf(stderr, "Error initializing ncurses.\n");
     exit(2);
   }
-  
+
   // Seed random number generator with the time in milliseconds
   srand(time_ms());
-  
+
   noecho();               // Don't print keys when pressed
   keypad(mainwin, true);  // Support arrow keys
   nodelay(mainwin, true); // Non-blocking keyboard access
-  
+
   // Initialize the game display
   init_display();
-  
+
   // Zero out the board contents
   memset(board, 0, BOARD_WIDTH*BOARD_HEIGHT*sizeof(int));
-  
+
   // Put the worm at the middle of the board
   board[BOARD_HEIGHT/2][BOARD_WIDTH/2] = 1;
-  
+
   // Thread handles for each of the game threads
   task_t update_worm_thread;
   task_t draw_board_thread;
   task_t read_input_thread;
   task_t update_apples_thread;
   task_t generate_apple_thread;
-  
+
   // Initialize the scheduler library
   scheduler_init();
-  
+
   // Create threads for each task in the game
   task_create(&update_worm_thread, update_worm);
   task_create(&draw_board_thread, draw_board);
   task_create(&read_input_thread, read_input);
   task_create(&update_apples_thread, update_apples);
   task_create(&generate_apple_thread, generate_apple);
-  
+
   // Wait for these threads to exit
   task_wait(update_worm_thread);
   task_wait(draw_board_thread);
   task_wait(read_input_thread);
   task_wait(update_apples_thread);
-  
+
   // Don't wait for the generate_apple task because it sleeps for 2 seconds,
   // which creates a noticeable delay when exiting.
   //task_wait(generate_apple_thread);
-  
+
   // Display the end of game message and wait for user input
   end_game();
-  
+
   // Clean up window
   delwin(mainwin);
   endwin();
