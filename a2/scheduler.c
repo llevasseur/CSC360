@@ -64,6 +64,7 @@ void scheduler() {
     if(!checkTasks())
     {
         setcontext(&tasks[0].context);
+        
     }
 
     while(checkTasks())
