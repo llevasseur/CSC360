@@ -1,4 +1,7 @@
-all: badDataPar
+all: badDataPar bruteForce
 
-dataPar: badDataPar.c
-	gcc -Wall -Werror -pedantic-errors dataPar.c  -o badDataPar
+badDataPar: badDataPar.c
+	gcc -Wall -Werror -pedantic-errors badDataPar.c  -o badDataPar
+
+bruteForce: bruteForce.c
+	gcc -Wall -Werror -pedantic-errors bruteForce.c -o bruteForce

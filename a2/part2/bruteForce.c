@@ -30,7 +30,15 @@ int main() {
     infile = fopen(filename, "r");
     char line[1024];
     int buffer = BUFSIZE;
+    int max_index = buffer - 1;
     float *values = (float*) malloc (buffer * sizeof(float));
+
+    if (values == NULL)
+    {
+        printf("error allocating mem\n");
+        return 1;
+    }
+
     int index = 0;
 
     if (infile == NULL)
@@ -39,12 +47,21 @@ int main() {
         printf("File %s could not be found\n", filename);
     } else {
         //We can use the file
-        if(!fgets(line, 1024, infile)) return 1;
+        if (!fgets(line, 1024, infile)) return 1;
         while (fgets(line, 1024, infile))
         {
+            if(index > max_index)
+            {
+                values = (float*) realloc(values, (max_index + 1 + buffer) * sizeof(float));
+                if (values == NULL)
+                {
+                    printf("New Error allocating mem\n");
+                    return 1;
+                }
+                max_index += buffer;
+            }
             char* tmp = strdup(line);
             values[index] = atof(getfield(tmp, 2));
-            if (index < 52) printf("Value is %f\n", values[index]);
             index++;
             free(tmp);
         }
