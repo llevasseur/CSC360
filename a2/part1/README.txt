@@ -5,3 +5,4 @@ Collaborated with Daniel Z. and Rylan C.
 
 scheduler.c manages tasks by a cooperative scheduling method. This makes sure only one task is running at a time while the others are ready for an opening, sleeping, or waiting (blocked).
 
+Did 
