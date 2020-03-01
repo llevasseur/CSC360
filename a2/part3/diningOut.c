@@ -108,16 +108,16 @@ void *watcher()
         usleep(500000);
 
         //begin printing
-        printf("Philo   State               Fork    Held by\n");
+        //printf("Philo   State               Fork    Held by\n");
         for(i = 0; i < NUM_PHILS; i++)
         {
             if (held_by[i] != -1)
             {
-                printf("[%2d]:   %-20s[%2d]:     %d\n", i, state[i], i, held_by[i]);
+                //printf("[%2d]:   %-20s[%2d]:     %d\n", i, state[i], i, held_by[i]);
                 used++;
 
             } else {
-                printf("[%2d]:   %-20s[%2d]:     Free\n", i, state[i], i);
+                //printf("[%2d]:   %-20s[%2d]:     Free\n", i, state[i], i);
                 available++;
 
             }
@@ -135,7 +135,7 @@ void *watcher()
 
         }
 
-        printf("thinking=%2d waiting=%2d eating=%2d     used=%2d available=%2d\n\n\n", thinking, waiting,
+        //printf("thinking=%2d waiting=%2d eating=%2d     used=%2d available=%2d\n\n\n", thinking, waiting,
       eating, used, available);
 
     }
