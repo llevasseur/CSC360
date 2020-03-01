@@ -54,6 +54,7 @@ void *philosopher(void *t_id)
         //current philosopher, release the first fork and wait again.
         while(sem_trywait(&fork_mutex[second_fork]))
         {
+            printf("h!i\n");
             if(prev_used_by[first_fork] == current_id)
             {
                 held_by[first_fork] = -1;
@@ -195,7 +196,6 @@ int main(int argc, char **argv)
         pthread_create(&threads[i], NULL, philosopher, (void*)&phil_id[i]);
     }
     pthread_create(&threads[NUM_PHILS], NULL, watcher, NULL);
-    printf("hi\n");
 
     sleep(TIME);
 
