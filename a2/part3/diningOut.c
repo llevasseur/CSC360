@@ -25,7 +25,7 @@ void check_for_forks(int current_id)
         state[current_id] = EATING;
         sleep(2);
         printf("Philosopher %d takes fork %d and %d\n", current_id, LEFT, current_id);
-        printf("Philosopher &d is Eating\n", current_id);
+        printf("Philosopher %d is Eating\n", current_id);
 
         //Used to wake up hungry philosophers during give_fork
         sem_post(&S[current_id]);
