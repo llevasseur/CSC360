@@ -8,6 +8,9 @@
 #define N 5 //Number
 #define LEFT (current_id + 4) % N
 #define RIGHT (current_id + 1) % N
+#define HUNGRY 1
+#define EATING 0
+#define THINKING 2
 
 int state[N];
 int phil_id[N] = {0, 1, 2, 3, 4};
