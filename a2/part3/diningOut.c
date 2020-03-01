@@ -59,7 +59,7 @@ void give_fork(int current_id)
     //update state
     state[current_id] = THINKING;
 
-    printf("Philosopher %d putting fork %d and %d down\n", current_id, LEFT, RIGHT);
+    printf("Philosopher %d putting fork %d and %d down\n", current_id, LEFT, current_id);
     printf("Philosopher %d is thinking\n", current_id);
 
     check_for_forks(LEFT);
