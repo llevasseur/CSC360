@@ -136,7 +136,7 @@ void *watcher()
         }
 
         //printf("thinking=%2d waiting=%2d eating=%2d     used=%2d available=%2d\n\n\n", thinking, waiting,
-      eating, used, available);
+      //eating, used, available);
 
     }
 
