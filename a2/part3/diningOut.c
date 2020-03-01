@@ -41,6 +41,7 @@ void *philosopher(void *t_id)
     //exit while loop when current Id has been set to -1
     while(*(int*) t_id != -1)
     {
+        printf("HA\n");
         state[current_id] = "Thinking";
         usleep(random() % MAX_SLEEP);
 
