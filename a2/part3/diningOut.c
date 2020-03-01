@@ -6,6 +6,8 @@
 #include <string.h>
 
 #define N 5 //Number
+#define LEFT (current_id + 4) % N
+#define RIGHT (current_id + 1) % N
 
 char **state;
 int phil_id[N] = {0, 1, 2, 3, 4};
@@ -15,21 +17,12 @@ sem_t S[N];
 
 void check_for_forks(int current_id)
 {
-    int first_fork = current_id;
-    int second_fork = current_id+1;
-
-    //Case where current_id = NUM_PHILS-1 first and second fork have different ids
-    if(current_id == N - 1)
-    {
-        first_fork = 0;
-        second_fork = N - 1;
-    }
-    if((strcmp(state[current_id], "Hungry") == 0) && (strcmp(state[first_fork], "Eating") != 0) && (strcmp(state[second_fork], "Eating") != 0))
+    if((strcmp(state[current_id], "Hungry") == 0) && (strcmp(state[LEFT], "Eating") != 0) && (strcmp(state[RIGHT], "Eating") != 0))
     {
         printf("hi\n");
         state[current_id] = "Eating";
         sleep(2);
-        printf("Philosopher %d takes fork %d and %d\n", current_id, first_fork, second_fork);
+        printf("Philosopher %d takes fork %d and %d\n", current_id, LEFT, RIGHT);
 
         //Used to wake up hungry philosophers during give_fork
         sem_post(&S[current_id]);
@@ -58,25 +51,16 @@ void take_fork(int current_id)
 
 void give_fork(int current_id)
 {
-    int first_fork = current_id;
-    int second_fork = current_id+1;
-
-    //Case where current_id = NUM_PHILS-1 first and second fork have different ids
-    if(current_id == N - 1)
-    {
-        first_fork = 0;
-        second_fork = N - 1;
-    }
     sem_wait(&mutex);
 
     //update state
     state[current_id] = "Thinking";
 
-    printf("Philosopher %d putting fork %d and %d down", current_id, first_fork, second_fork);
+    printf("Philosopher %d putting fork %d and %d down", current_id, LEFT, RIGHT);
     printf("Philosopher %d is thinking\n", current_id);
 
-    check_for_forks(first_fork);
-    check_for_forks(second_fork);
+    check_for_forks(LEFT);
+    check_for_forks(RIGHT);
 
     sem_post(&mutex);
 }
