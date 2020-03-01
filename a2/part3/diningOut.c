@@ -49,8 +49,10 @@ void *philosopher(void *t_id)
 
         //pick up first fork
         sem_wait(&fork_mutex[first_fork]);
+        printf("here\n");
         held_by[first_fork] = current_id;
         int value;
+        printf("now?\n");
         sem_getvalue(&fork_mutex[second_fork], &value);
         printf("%d\n", value);
 
