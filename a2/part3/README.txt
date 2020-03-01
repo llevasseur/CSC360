@@ -13,3 +13,6 @@ SEED is the random seed used, and the time it takes to use the resource.
 TIME is the length time you wish the experiment to go.
 
 On input, for example ./diningOut 5 2 20
+
+I was told that you have to use semaphores in this part of the assignment so I am going to make another version of this. I still do really like how this was implemented with pthread_mutex although.
+
