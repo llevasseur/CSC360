@@ -17,13 +17,11 @@ void *fun(void *in)
     int i;
     for (i = 0; i < 10000000; i++) {
         //Lock mutex before going to change variable
-        //printf("hi\n");
         pthread_mutex_lock(&test_mutex);
         x++;
         //Unlock mutex after changing the variable
         pthread_mutex_unlock(&test_mutex);
     }
-    printf("hi\n");
     return 0;
 }
 

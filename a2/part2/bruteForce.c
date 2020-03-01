@@ -7,6 +7,9 @@
 #include <string.h>
 
 #define BUFSIZE 100;
+
+pthread_mutex_t
+
 //Found on Stack Overflow https://stackoverflow.com/questions/12911299/read-csv-file-in-c
 const char* getfield(char* line, int num)
 {
@@ -68,9 +71,6 @@ int main() {
     }
     printf("index is %d\n", index);
 
-    //initalizations of variables
-    //float values[18] = {87.6, 88.9, 90.4, 91.3, 92.9, 95.4, 97.8, 100, 102.8, 104.7, 107, 109.1, 111.5, 114.1, 114.4, 116.5, 119.9, 121.7};
-    //int values_length = sizeof(values)/sizeof(values[0]);
     int values_length = index;
     int combos = 0;
     float slope, intersect, sum, tmp_value;
@@ -85,10 +85,7 @@ int main() {
         for (int j = i+1; j < values_length; j++) //j = i+1 to avoid checking a line twice
         {
             combos++;
-            //caluclate the line: point 1 = (i,values[i]), point 2 = (j,values[j])
-          //printf("i = %d, j = %d\n", i, j);
             slope = (values[j] - values[i]) / (j - i);
-            //printf("slope: %f\n", slope);
             intersect = values[j] - (slope * j);
             sum = 0;
             for (int k = 0; k < values_length; k++) //Sum the distance from each other point to the line.
@@ -101,7 +98,6 @@ int main() {
                     sum += tmp_value;
                 }
             }
-            //printf("Count = %d, Sum = %f\n", combos, sum);
             if (sum < min_sum) //Found a new smallest min, update final values
             {
                 min_sum = sum;
