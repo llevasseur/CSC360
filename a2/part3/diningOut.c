@@ -22,7 +22,6 @@ void check_for_forks(int current_id)
 {
     if((state[current_id] == HUNGRY) && (state[LEFT] != EATING) && (state[RIGHT] != EATING))
     {
-        printf("hi\n");
         state[current_id] = EATING;
         sleep(2);
         printf("Philosopher %d takes fork %d and %d\n", current_id, LEFT, RIGHT);
@@ -59,7 +58,7 @@ void give_fork(int current_id)
     //update state
     state[current_id] = THINKING;
 
-    printf("Philosopher %d putting fork %d and %d down", current_id, LEFT, RIGHT);
+    printf("Philosopher %d putting fork %d and %d down\n", current_id, LEFT, RIGHT);
     printf("Philosopher %d is thinking\n", current_id);
 
     check_for_forks(LEFT);
