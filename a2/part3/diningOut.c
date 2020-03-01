@@ -9,7 +9,7 @@
 #define LEFT (current_id + 4) % N
 #define RIGHT (current_id + 1) % N
 
-char **state;
+int state[N];
 int phil_id[N] = {0, 1, 2, 3, 4};
 
 sem_t mutex;
@@ -17,10 +17,10 @@ sem_t S[N];
 
 void check_for_forks(int current_id)
 {
-    if((strcmp(state[current_id], "Hungry") == 0) && (strcmp(state[LEFT], "Eating") != 0) && (strcmp(state[RIGHT], "Eating") != 0))
+    if( state[current_id] == HUNGRY) && (state[LEFT] != EATING) && (state[RIGHT] != EATING))
     {
         printf("hi\n");
-        state[current_id] = "Eating";
+        state[current_id] = EATING;
         sleep(2);
         printf("Philosopher %d takes fork %d and %d\n", current_id, LEFT, RIGHT);
 
@@ -34,7 +34,7 @@ void take_fork(int current_id)
     sem_wait(&mutex);
 
     //update state
-    state[current_id] = "Hungry";
+    state[current_id] = HUNGRY;
 
     printf("Philosopher %d is Hungry\n", current_id);
 
@@ -54,7 +54,7 @@ void give_fork(int current_id)
     sem_wait(&mutex);
 
     //update state
-    state[current_id] = "Thinking";
+    state[current_id] = THINKING;
 
     printf("Philosopher %d putting fork %d and %d down", current_id, LEFT, RIGHT);
     printf("Philosopher %d is thinking\n", current_id);
@@ -83,12 +83,6 @@ int main()
     int i;
     pthread_t thread_id[N];
 
-    state = (char**) malloc (N * sizeof(char*));
-    if(state == NULL)
-    {
-        printf("Error allocating memory for state\n");
-        return 1;
-    }
 
     //initialize semaphores
     sem_init(&mutex, 0, 1);
@@ -110,6 +104,5 @@ int main()
         pthread_join(thread_id[i], NULL);
     }
 
-    free(state);
     //return 0;
 }
