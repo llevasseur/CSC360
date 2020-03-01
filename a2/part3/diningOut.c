@@ -20,7 +20,7 @@ sem_t S[N];
 
 void check_for_forks(int current_id)
 {
-    if( state[current_id] == HUNGRY) && (state[LEFT] != EATING) && (state[RIGHT] != EATING))
+    if((state[current_id] == HUNGRY) && (state[LEFT] != EATING) && (state[RIGHT] != EATING))
     {
         printf("hi\n");
         state[current_id] = EATING;
