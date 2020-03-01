@@ -189,7 +189,7 @@ int main(int argc, char **argv)
     for(i = 0; i < NUM_PHILS; i++)
     {
         phil_id[i] = i;
-        sem_init(&fork_mutex[i], 0, 0);
+        sem_init(&fork_mutex[i], 1, 0);
         state[i] = "Waiting";
         held_by[i] = -1;
         prev_used_by[i] = i;
