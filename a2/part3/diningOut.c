@@ -24,10 +24,10 @@ void check_for_forks(int current_id)
         first_fork = 0;
         second_fork = N - 1;
     }
-    printf("hi\n");
     if((strcmp(state[current_id], "Hungry") == 0)
     && (strcmp(state[first_fork], "Eating") != 0) && (strcmp(state[second_fork], "Eating") != 0))
     {
+        printf("hi\n");
         state[current_id] = "Eating";
         sleep(2);
         printf("Philosopher %d takes fork %d and %d\n", current_id, first_fork, second_fork);
