@@ -44,7 +44,7 @@ void *philosopher(void *t_id)
         printf("HA\n");
         state[current_id] = "Thinking";
         usleep(random() % MAX_SLEEP);
-
+        printf("how bout here?\n");
         state[current_id] = "Waiting";
 
         //pick up first fork
