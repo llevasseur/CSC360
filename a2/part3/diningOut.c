@@ -49,6 +49,9 @@ void *philosopher(void *t_id)
         //pick up first fork
         sem_wait(&fork_mutex[first_fork]);
         held_by[first_fork] = current_id;
+        int value;
+        sem_getvalue(&for_mutex[second_fork], &value);
+        printf("%d\n", value);
 
         //if second fork is not locked and first fork was last used by
         //current philosopher, release the first fork and wait again.
