@@ -237,7 +237,7 @@ void InitLLFS()
 	
 	char* buffer;
 	buffer = (char *) malloc(BLOCK_SIZE);
-	readBlock(disk, 9, buffer);
+	readBlock(disk, inodeMapBlock, buffer);
 	printf("%u\n", buffer[0]);
 	
 	freeInode = firstFreeBlock(disk, inodeMapBlock);
