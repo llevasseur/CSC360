@@ -48,8 +48,19 @@ void set_block(char* buffer, int block_num)
     buffer[index] |= 1UL << bit_index;
 }
 
-int firstFreeBlock(FILE* disk)
+int firstFreeBlock(FILE* disk, int blockNum)
 {
+	
+	char* buffer;
+	buffer = (char *) malloc(BLOCK_SIZE);
+	readBlock(disk, blockNum, buffer);
+	
+	unsigned int value = buffer[1];
+	printf("1: %u\n", value);
+	
+	free(buffer);
+	return -1;
+	/*
 	//return block number
 	//go to block map
 	//store block in a buffer
@@ -120,8 +131,10 @@ int firstFreeBlock(FILE* disk)
 	
 	writeBlock(disk, FREE_BLOCK, buffer);
 	printf("block: %d\n", block);
+	free(buffer);
 	fclose(disk);
 	return block;
+	*/
 }
 
 
@@ -170,6 +183,7 @@ void InitFreeBlockVector()
 	}
 	
 	writeBlock(disk, 1, FreeBlockBuffer);
+	free(FreeBlockBuffer);
 	fclose(disk);
 }
 
@@ -197,11 +211,13 @@ void InitInodeBlockVector()
 	readBlock(disk, 10, InodeReadBlockBuffer);
 	printf("%u\n", InodeReadBlockBuffer[0]);
 	
-	firstFreeBlock(disk);
+	firstFreeBlock(disk, FREE_BLOCK);
 	
 	
 	// Set inode block to unavailable in block node
 	//closeBlock();
+	free(InodeBlockBuffer);
+	free(InodeReadBlockBuffer);
 	fclose(disk);
 	
 }
@@ -218,6 +234,7 @@ void InitLLFS()
 	InitSuperblock();
 	InitFreeBlockVector();
 	InitInodeBlockVector();
+	
 	
 	//initialize root directory
 }
