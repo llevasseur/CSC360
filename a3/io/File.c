@@ -48,18 +48,47 @@ void set_block(char* buffer, int block_num)
     buffer[index] |= 1UL << bit_index;
 }
 
-int firstFreeBlock(FILE* disk, int blockNum)
+
+int firstFreeBlock(FILE* disk, int block_num)
 {
 	
 	char* buffer;
 	buffer = (char *) malloc(BLOCK_SIZE);
-	readBlock(disk, blockNum, buffer);
+	readBlock(disk, block_num, buffer);
 	
-	unsigned int value = buffer[1];
-	printf("1: %u\n", value);
+	int block;
+	int j = 1;
+
+	bool blockFound = false;
 	
+	while (j <= BLOCK_SIZE && blockFound == false)
+	{
+		unsigned int value = buffer[j];
+		for(int i = 7; i >= 0; i--)
+		{
+			unsigned char byte = value >> i;
+			printf("byte %d: %u\n", i, byte);
+			if (byte == 1)
+			{
+				blockFound = true;
+				block = (8 * j) + abs(i - 7);
+				printf("Your block is %d\n", block);
+				buffer[j] = buffer[j] >> 1;
+				break;
+			}
+		}
+	}
+	
+	if (blockFound == false)
+	{
+		return -1;
+	}
+	
+	writeBlock(disk, block_num, buffer);
 	free(buffer);
-	return -1;
+	fclose(disk);
+	return block;
+	
 	/*
 	//return block number
 	//go to block map
