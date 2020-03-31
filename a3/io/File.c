@@ -11,14 +11,17 @@
 #include <stdbool.h>
 #include "File.h"
 
+//llevasseur@linux.csc.uvic.ca
+
+int inodeMapBlock;
 
 
 struct inode {
 	unsigned int i_size;
 	unsigned int i_flag;
-	unsigned char i_block_numbers[20];
-	unsigned char i_sing_ind[2];
-	unsigned char i_doub_ind[2];
+	unsigned char i_block_numbers[10];
+	unsigned char i_sing_ind;
+	unsigned char i_doub_ind;
 }; //32 bytes
 
 void readBlock(FILE* disk, int blockNum, char* buffer)
@@ -51,13 +54,14 @@ void set_block(char* buffer, int block_num)
 
 int firstFreeBlock(FILE* disk, int block_num)
 {
-	
+	printf("Block num: %d\n", block_num);
 	char* buffer;
 	buffer = (char *) malloc(BLOCK_SIZE);
 	readBlock(disk, block_num, buffer);
+	printf("%u\n", buffer[0]);
 	
 	int block;
-	int j = 1;
+	int j = 0;
 
 	bool blockFound = false;
 	
@@ -77,6 +81,7 @@ int firstFreeBlock(FILE* disk, int block_num)
 				break;
 			}
 		}
+		j++;
 	}
 	
 	if (blockFound == false)
@@ -89,81 +94,6 @@ int firstFreeBlock(FILE* disk, int block_num)
 	fclose(disk);
 	return block;
 	
-	/*
-	//return block number
-	//go to block map
-	//store block in a buffer
-	//traverse until blockNum is found <- byte index and bit index
-	//fill byte
-	char* buffer;
-	buffer = (char *) malloc(BLOCK_SIZE);
-	readBlock(disk, FREE_BLOCK, buffer);
-	int i = 0;
-	int block = 0;
-	bool blockFound = false;
-	
-	while (i <= BLOCK_SIZE && blockFound == false)
-	{
-		unsigned int value = buffer[i];
-		printf("%d\n", value);
-		
-		char mask[32] = {0};
-		for (int j = 0; j < 32; j++)
-		{
-			mask[j] = (value << j) & (1 << (8 * sizeof(unsigned int)- 1))
-						? '1' : '0';
-			if (mask[j] == '1') printf("Hit a 1! : %d  j = %d ", mask[j], j);
-		}
-		printf("\n");
-		
-		unsigned int reverse[32] = {0};
-		for (int j = 0; j < 32; j++)
-		{
-			reverse[31 - j] = mask[j];
-		}
-		
-		for (int j = 0; j < 32; j++)
-		{
-			if(reverse[j] == '1')
-			{
-				blockFound = true;
-				block = i * 8 + j;
-				reverse[j] = '0';
-				break;
-			}
-		}
-		
-		if (blockFound)
-		{
-			unsigned int newValue[32] = {0};
-			for (int j = 0; j < 32; j++)
-			{
-				newValue[31 - j] = reverse[j];
-			}
-			
-			unsigned int val = 0;
-			for (int j = 0; j < 32; j++)
-			{
-				//val << 1;
-				val += newValue[j] - '0';
-			}
-			
-			buffer[i] = val;
-		}
-		i++;
-	}
-	
-	if (blockFound == false)
-	{
-		return -1;
-	}
-	
-	writeBlock(disk, FREE_BLOCK, buffer);
-	printf("block: %d\n", block);
-	free(buffer);
-	fclose(disk);
-	return block;
-	*/
 }
 
 
@@ -240,11 +170,9 @@ void InitInodeBlockVector()
 	readBlock(disk, 10, InodeReadBlockBuffer);
 	printf("%u\n", InodeReadBlockBuffer[0]);
 	
-	firstFreeBlock(disk, FREE_BLOCK);
+	inodeMapBlock = firstFreeBlock(disk, FREE_BLOCK);
+	printf("InodeMapBlock1: %d\n", inodeMapBlock);
 	
-	
-	// Set inode block to unavailable in block node
-	//closeBlock();
 	free(InodeBlockBuffer);
 	free(InodeReadBlockBuffer);
 	fclose(disk);
@@ -281,9 +209,45 @@ void InitLLFS()
  *  		directory location
  *  	If any of the can't be done then return an error
  */
- void createDirectory()
+ void createDirectory(char* filename, unsigned int flag)
  {
+	if (flag > 1 || flag < 0)
+	{
+		printf("error: flag size incorrect for new file.\n");
+		exit(0);
+	}
+	 
+	FILE* disk = fopen(vdisk_path, "rb+");
+	 
+	struct inode cur_inode;
+	 
+	cur_inode.i_size = 0;
+	cur_inode.i_flag = flag;
+	 
+	cur_inode.i_block_numbers[0] = firstFreeBlock(disk, FREE_BLOCK);
+	for(int i = 1; i < 10; i++)
+	{
+		cur_inode.i_block_numbers[i] = 0;
+	}
+	cur_inode.i_sing_ind = 0;
+	cur_inode.i_doub_ind = 0;
+	 
+	int freeInode;
+	printf("InodeMapBlock: %d\n", inodeMapBlock);
+	
+	char* buffer;
+	buffer = (char *) malloc(BLOCK_SIZE);
+	readBlock(disk, 9, buffer);
+	printf("%u\n", buffer[0]);
+	
+	freeInode = firstFreeBlock(disk, inodeMapBlock);
+	printf("Free inode: %d\n", freeInode);
+
+		 	 
+	 //create inode structure
+	 
 	 //check free inode blocks
+	 
  }
 
 /**
@@ -320,5 +284,6 @@ void InitLLFS()
 int main()
 {
 	InitLLFS();
+	createDirectory("root", 0);
     return 0;
 }
